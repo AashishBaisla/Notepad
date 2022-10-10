@@ -1,3 +1,4 @@
+from ctypes import pointer
 from tkinter import *
 import os
 from tkinter.filedialog import *
@@ -17,7 +18,7 @@ class Notepad:
         else:
             pass
 
-        self.window.title("Untitled - Notepad created by Aashish Baisla")
+        self.window.title("Untitled - Notepad")
         self.cr_file = None
         self.text_box.delete(1.0, END)
 
@@ -64,7 +65,7 @@ class Notepad:
             f.write(self.text_box.get(1.0, END))
             f.close()
 
-            self.window.title(os.path.basename(self.cr_file) + " - Notepad created by Aashish Baisla")
+            self.window.title(os.path.basename(self.cr_file) + " - Notepad")
         except:
             pass
 
@@ -96,18 +97,28 @@ class Notepad:
         #create find window
         self.window_2 = Tk()
         self.window_2.title("Find")
-        self.window_2.minsize(200,50)
-        self.window_2.geometry("200x50")
+        self.window_2.resizable(False, False)
+        self.window_2.geometry("300x50")
         self.window_2.bind('<Return>', self.find_word)
-        self.entry1 = Entry(self.window_2)
-        self.entry1.pack(side="left", fill=X, padx=10)
-        self.button1 = Button(self.window_2, text="Find", command=self.find_word)
-        self.button1.pack(side="left", fill=X)
 
+        self.label1 = Label(self.window_2, text="Find what:")
+        self.label1.grid(row=1, column=1, padx=10, pady=8)
+
+        self.entry1 = Entry(self.window_2)
+        self.entry1.grid(row=1, column=2, padx=10, pady=8)
+
+        self.button1 = Button(self.window_2, text="Find", command=self.find_word,width=6, activebackground="black", activeforeground="white")
+        self.button1.grid(row=1, column=3, padx=10, pady=8)
 
     def find_word(self, event=None):
         self.text_box.tag_remove('found', '1.0', END)
-
+        self.case = IntVar()
+        self.case_sensitive = messagebox.askyesno("Information", "Case Sensitive ?")
+        if self.case_sensitive:
+            self.case = 0
+        else:
+            self.case = 1
+            
         # take the word which we are searching
         self.searched_text = self.entry1.get()
         if self.searched_text:
@@ -115,7 +126,7 @@ class Notepad:
             while 1:
                 # searches for desired string from index 1
                 #like idx = 1.10, idx = 2.12 etc
-                self.idx = self.text_box.search(self.searched_text, self.idx, stopindex=END, nocase=True)
+                self.idx = self.text_box.search(self.searched_text, self.idx, stopindex=END, nocase=self.case)
 
                 if not self.idx:
                     break
@@ -224,7 +235,7 @@ class Notepad:
 
     def layout_creation(self):
         self.window = Tk()
-        self.window.title("Untitled - Notepad created by Aashish Baisla")
+        self.window.title("Untitled - created by Aashish Baisla")
         self.window.geometry("400x400")
         self.window.wm_iconbitmap("icons/notepad.ico")
 

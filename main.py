@@ -226,7 +226,7 @@ class Notepad:
         self.window = Tk()
         self.window.title("Untitled - Notepad created by Aashish Baisla")
         self.window.geometry("400x400")
-        self.window.wm_iconbitmap("notepad.ico")
+        self.window.wm_iconbitmap("icons/notepad.ico")
 
         # Creating Scroll Bar for text window
         self.scroll = Scrollbar(self.window)

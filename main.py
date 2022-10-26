@@ -93,7 +93,7 @@ class Notepad:
     def paste(self):
         self.text_box.event_generate("<<Paste>>")
 
-    def find(self, event=None):
+    def find_window(self, event=None):
         #create find window
         self.window_2 = Tk()
         self.window_2.title("Find")
@@ -106,6 +106,17 @@ class Notepad:
 
         self.entry1 = Entry(self.window_2)
         self.entry1.grid(row=1, column=2, padx=10, pady=8)
+
+        #let window on top
+        self.window_2.lift()
+        self.window_2.attributes("-topmost", True)
+
+        #if you want this window on top for first time only then use below command
+        #self.window_2.attributes("-topmost", False)
+
+        #set focus to window_2
+        self.window_2.focus_force()
+        self.entry1.focus_set()
 
         self.button1 = Button(self.window_2, text="Find", command=self.find_word,width=6, activebackground="black", activeforeground="white")
         self.button1.grid(row=1, column=3, padx=10, pady=8)
@@ -143,8 +154,9 @@ class Notepad:
             self.text_box.tag_config('found', foreground='red', background="yellow")
         self.entry1.focus_set()
 
-    def find_replace(self):
-        # create find & replace window
+
+    def find_replace_window(self):
+        # creating find & replace window
         self.window_3 = Tk()
         self.window_3.title("Find")
         self.window_3.minsize(300, 80)
@@ -158,6 +170,17 @@ class Notepad:
         self.entry2.grid(row=1, column=0, padx=10, pady=8,  sticky="we")
         self.button2 = Button(self.window_3, text="Replace", fg="green", command=self.replace)
         self.button2.grid(row=1, column=1, padx=10, sticky="we")
+
+        #let window on top
+        self.window_3.lift()
+        self.window_3.attributes("-topmost", True)
+
+        #if you want this window on top for first time only then use below command
+        #self.window_2.attributes("-topmost", False)
+
+        #set focus to window_2
+        self.window_3.focus_force()
+        self.entry1.focus_set()
 
     def replace(self):
         self.text_box.tag_remove('found', '1.0', END)
@@ -195,12 +218,17 @@ class Notepad:
             self.text_box.tag_config('found', foreground='green', background="yellow")
         self.entry2.focus_set()
 
+    def del_tag(self, event=None):
+        self.text_box.tag_remove('found', '1.0', END)
+
     def select_all(self, event=None):
         self.text_box.tag_add('sel', 1.0, END)
 
     def date_time(self, event=None):
         self.x = datetime.datetime.now()
         self.x = self.x.strftime("%d %B, %Y")
+        self.x = " " * 1 + self.x
+
         self.current_index = self.text_box.index(INSERT)
         self.text_box.insert(self.current_index,self.x)
 
@@ -273,8 +301,8 @@ class Notepad:
         self.m2.add_command(label="Copy", command=self.copy, accelerator='Ctrl+C', compound=LEFT, image=self.copy_icon)
         self.m2.add_command(label="Paste", command=self.paste, accelerator='Ctrl+V', compound=LEFT, image=self.paste_icon)
         self.m2.add_separator()
-        self.m2.add_command(label="Find", command=self.find, accelerator='Ctrl+F',compound=LEFT, image=self.find_icon)
-        self.m2.add_command(label="Replace", command=self.find_replace, compound=LEFT, image=self.replace_icon)
+        self.m2.add_command(label="Find", command=self.find_window, accelerator='Ctrl+F',compound=LEFT, image=self.find_icon)
+        self.m2.add_command(label="Replace", command=self.find_replace_window, compound=LEFT, image=self.replace_icon)
         self.m2.add_separator()
         self.m2.add_command(label="Select All", command=self.select_all, accelerator='Ctrl+A', compound=LEFT, image=self.selectall_icon)
         self.m2.add_command(label="Time/Date", command=self.date_time, accelerator='Ctrl+T', compound=LEFT, image=self.timedate_icon)
@@ -305,12 +333,15 @@ class Notepad:
         self.text_box.bind('<Control-n>', self.new)
         self.text_box.bind('<Control-O>', self.open)
         self.text_box.bind('<Control-o>', self.open)
-        self.text_box.bind('<Control-F>', self.find)
-        self.text_box.bind('<Control-f>', self.find)
+        self.text_box.bind('<Control-F>', self.find_window)
+        self.text_box.bind('<Control-f>', self.find_window)
         self.text_box.bind('<Control-T>', self.date_time)
         self.text_box.bind('<Control-t>', self.date_time)
         self.text_box.bind('<Any-KeyPress>', self.line_column_info)
-        self.text_box.bind('<Button-3>', self.do_popup)
+        self.text_box.bind('<Button-3>', self.del_tag, add="+")
+        self.text_box.bind('<Button-3>', self.do_popup, add="+")
+        
+        
 
     def icons(self):
         self.new_icon = PhotoImage(file='icons/new_file.png')
@@ -332,7 +363,6 @@ class Notepad:
         self.showinfobar_icon = PhotoImage(file='icons/showinfobar.png')
 
         self.help_icon = PhotoImage(file='icons/help.png')
-
 
 
 notepad = Notepad()
